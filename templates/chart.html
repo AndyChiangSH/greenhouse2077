@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Daskboard{% endblock title %}
+{% block content %}
+<h1>{{ label }}</h1>
+{% if y %}
+<canvas id="myChart" height="100"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [{% for xi in x %}"{{ xi }}",{% endfor %}],
+    datasets: [{
+        label: "{{ label }}",
+        data: [{% for yi in y %}{% if yi %}{{ yi }}{% else %}0{% endif %},{% endfor %}],
+        backgroundColor: 'rgba(149, 99, 255, 0.2)',
+        borderColor: 'rgba(149, 99, 255, 1)',
+        borderWidth: 2,
+            }]
+        },
+    options: {
+        responsive: true,
+        },
+    });
+</script>
+{% else %}
+<h3 class="mb-2">No data.</h3>
+{% endif %}
+<button class="btn btn-primary" onclick="location.reload();">Update Data</button>
+{% endblock content %}

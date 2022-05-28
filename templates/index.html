@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Daskboard{% endblock title %}
+{% block content %}
+{% if success %}
+<div class="row mb-2">
+    <div class="col-xl-4 col-sm-6 grid-margin stretch-card">
+        <a class="card-link" href="/chart/temperature">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-9">
+                            <div class="d-flex align-items-center align-self-start">
+                                <h1 class="dashboard-value mb-0">
+                                    {% if temp.now %}
+                                    {{ temp.now }}
+                                    {% else %}
+                                    --
+                                    {% endif %}
+                                    <span class="dashboard-unit">℃</span>
+                                </h1>
+                            </div>
+                        </div>
+                        <div class="col-3 d-flex flex-column justify-content-center align-items-center">
+                            {% if temp.now and temp.pre %}
+                            {% if temp.diff > 0 %}
+                            <div class="icon icon-box-success mb-1">
+                                <span class="mdi mdi-arrow-top-right icon-item"></span>
+                            </div>
+                            <p class="text-success font-weight-medium mb-0">+{{ temp.diff }} ℃</p>
+                            {% elif temp.diff < 0 %} <div class="icon icon-box-danger mb-1">
+                                <span class="mdi mdi-arrow-bottom-right icon-item"></span>
+                        </div>
+                        <p class="text-danger font-weight-medium mb-0">{{ temp.diff }} ℃</p>
+                        {% else %}
+                        <div class="icon icon-box-warning mb-1">
+                            <span class="mdi mdi-arrow-right icon-item"></span>
+                        </div>
+                        <p class="text-warning font-weight-medium mb-0">+0 ℃</p>
+                        {% endif %}
+                        {% else %}
+                        <div class="icon icon-box-secondary mb-1">
+                            <span class="mdi mdi-close icon-item"></span>
+                        </div>
+                        <p class="text-secondary font-weight-medium mb-0">-- ℃</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <h3 class="text-muted font-weight-normal">Temperature</h6>
+            </div>
+    </div>
+    </a>
+</div>
+<div class="col-xl-4 col-sm-6 grid-margin stretch-card">
+    <a class="card-link" href="/chart/humidity">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                            <h1 class="dashboard-value mb-0">
+                                {% if humi.now %}
+                                {{ humi.now }}
+                                {% else %}
+                                --
+                                {% endif %}
+                                <span class="dashboard-unit">%</span>
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="col-3 d-flex flex-column justify-content-center align-items-center">
+                        {% if humi.now and humi.pre %}
+                        {% if humi.diff > 0 %}
+                        <div class="icon icon-box-success mb-1">
+                            <span class="mdi mdi-arrow-top-right icon-item"></span>
+                        </div>
+                        <p class="text-success font-weight-medium mb-0">+{{ humi.diff }} %</p>
+                        {% elif humi.diff < 0 %} <div class="icon icon-box-danger mb-1">
+                            <span class="mdi mdi-arrow-bottom-right icon-item"></span>
+                    </div>
+                    <p class="text-danger font-weight-medium mb-0">{{ humi.diff }} %</p>
+                    {% else %}
+                    <div class="icon icon-box-warning mb-1">
+                        <span class="mdi mdi-arrow-right icon-item"></span>
+                    </div>
+                    <p class="text-warning font-weight-medium mb-0">+0 %</p>
+                    {% endif %}
+                    {% else %}
+                    <div class="icon icon-box-secondary mb-1">
+                        <span class="mdi mdi-close icon-item"></span>
+                    </div>
+                    <p class="text-secondary font-weight-medium mb-0">-- %</p>
+                    {% endif %}
+                </div>
+            </div>
+            <h3 class="text-muted font-weight-normal">Humidity</h6>
+        </div>
+</div>
+</a>
+</div>
+<div class="col-xl-4 col-sm-6 grid-margin stretch-card">
+    <a class="card-link" href="/chart/soil_humidity">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                            <h1 class="dashboard-value mb-0">
+                                {% if soil_humi.now %}
+                                {{ soil_humi.now }}
+                                {% else %}
+                                --
+                                {% endif %}
+                                <span class="dashboard-unit">%</span>
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="col-3 d-flex flex-column justify-content-center align-items-center">
+                        {% if soil_humi.now and soil_humi.pre %}
+                        {% if soil_humi.diff > 0 %}
+                        <div class="icon icon-box-success mb-1">
+                            <span class="mdi mdi-arrow-top-right icon-item"></span>
+                        </div>
+                        <p class="text-success font-weight-medium mb-0">+{{ soil_humi.diff }} %</p>
+                        {% elif soil_humi.diff < 0 %} <div class="icon icon-box-danger mb-1">
+                            <span class="mdi mdi-arrow-bottom-right icon-item"></span>
+                    </div>
+                    <p class="text-danger font-weight-medium mb-0">{{ soil_humi.diff }} %</p>
+                    {% else %}
+                    <div class="icon icon-box-warning mb-1">
+                        <span class="mdi mdi-arrow-right icon-item"></span>
+                    </div>
+                    <p class="text-warning font-weight-medium mb-0">+0 %</p>
+                    {% endif %}
+                    {% else %}
+                    <div class="icon icon-box-secondary mb-1">
+                        <span class="mdi mdi-close icon-item"></span>
+                    </div>
+                    <p class="text-secondary font-weight-medium mb-0">-- %</p>
+                    {% endif %}
+                </div>
+            </div>
+            <h3 class="text-muted font-weight-normal">Soil humidity</h6>
+        </div>
+</div>
+</a>
+</div>
+<div class="col-xl-4 col-sm-6 grid-margin stretch-card">
+    <a class="card-link" href="/chart/brightness">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                            <h1 class="dashboard-value mb-0">
+                                {% if bright.now %}
+                                {{ bright.now }}
+                                {% else %}
+                                --
+                                {% endif %}
+                                <span class="dashboard-unit">Lv</span>
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="col-3 d-flex flex-column justify-content-center align-items-center">
+                        {% if bright.now and bright.pre %}
+                        {% if bright.diff > 0 %}
+                        <div class="icon icon-box-success mb-1">
+                            <span class="mdi mdi-arrow-top-right icon-item"></span>
+                        </div>
+                        <p class="text-success font-weight-medium mb-0">+{{ bright.diff }} Lv</p>
+                        {% elif bright.diff < 0 %} <div class="icon icon-box-danger mb-1">
+                            <span class="mdi mdi-arrow-bottom-right icon-item"></span>
+                    </div>
+                    <p class="text-danger font-weight-medium mb-0">{{ bright.diff }} Lv</p>
+                    {% else %}
+                    <div class="icon icon-box-warning mb-1">
+                        <span class="mdi mdi-arrow-right icon-item"></span>
+                    </div>
+                    <p class="text-warning font-weight-medium mb-0">+0 Lv</p>
+                    {% endif %}
+                    {% else %}
+                    <div class="icon icon-box-secondary mb-1">
+                        <span class="mdi mdi-close icon-item"></span>
+                    </div>
+                    <p class="text-secondary font-weight-medium mb-0">-- Lv</p>
+                    {% endif %}
+                </div>
+            </div>
+            <h3 class="text-muted font-weight-normal">Brightness</h6>
+        </div>
+</div>
+</a>
+</div>
+<div class="col-xl-4 col-sm-6 grid-margin stretch-card">
+    <a class="card-link" href="/chart/air_pressure">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                            <h1 class="dashboard-value mb-0">
+                                {% if air_p.now %}
+                                {{ air_p.now }}
+                                {% else %}
+                                --
+                                {% endif %}
+                                <span class="dashboard-unit">Pa</span>
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="col-3 d-flex flex-column justify-content-center align-items-center">
+                        {% if air_p.now and air_p.pre %}
+                        {% if air_p.diff > 0 %}
+                        <div class="icon icon-box-success mb-1">
+                            <span class="mdi mdi-arrow-top-right icon-item"></span>
+                        </div>
+                        <p class="text-success font-weight-medium mb-0">+{{ air_p.diff }} Pa</p>
+                        {% elif air_p.diff < 0 %} <div class="icon icon-box-danger mb-1">
+                            <span class="mdi mdi-arrow-bottom-right icon-item"></span>
+                    </div>
+                    <p class="text-danger font-weight-medium mb-0">{{ air_p.diff }} Pa</p>
+                    {% else %}
+                    <div class="icon icon-box-warning mb-1">
+                        <span class="mdi mdi-arrow-right icon-item"></span>
+                    </div>
+                    <p class="text-warning font-weight-medium mb-0">+0 Pa</p>
+                    {% endif %}
+                    {% else %}
+                    <div class="icon icon-box-secondary mb-1">
+                        <span class="mdi mdi-close icon-item"></span>
+                    </div>
+                    <p class="text-secondary font-weight-medium mb-0">-- Pa</p>
+                    {% endif %}
+                </div>
+            </div>
+            <h3 class="text-muted font-weight-normal">Air pressure</h6>
+        </div>
+</div>
+</a>
+</div>
+</div>
+{% else %}
+<h3 class="mb-2">Update fail! Please try again.</h3>
+{% endif %}
+<button class="btn btn-primary" onclick="location.reload();">Update Data</button>
+{% endblock content %}
