@@ -1,7 +1,7 @@
 from logging import exception
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import Sensor
+from .models import Device, Sensor
 
 # Create your views here.
 def index(request):
@@ -58,6 +58,7 @@ def index(request):
     }
         
     return render(request, "index.html", context)
+
 
 def add_data(request):
     try:
@@ -124,3 +125,34 @@ def chart(request, name="temperature"):
     }
     
     return render(request, "chart.html", context=context)
+
+
+def devices(request):
+    try:
+        device = Device.objects.get(id=1)
+    except exception as e:
+        return HttpResponse(f"Get device fail.<br>{e}")
+    
+    context = {
+        "device": device,
+    }
+    
+    return render(request, "devices.html", context=context)
+
+
+def switch_device(request, device):
+    try:
+        device_data = Device.objects.get(id=1)
+    except exception as e:
+        return HttpResponse(f"Get device fail.<br>{e}")
+    
+    if device == "light":
+        device_data.light = not device_data.light
+    elif device == "fan":
+        device_data.fan = not device_data.fan
+    elif device == "water":
+        device_data.water = not device_data.water
+    
+    device_data.save()
+    return redirect("/devices/")
+    

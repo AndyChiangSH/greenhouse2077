@@ -21,5 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', web.index),
     path('chart/<str:name>', web.chart),
+    path('devices/', web.devices),
+    path('devices/<str:device>', web.switch_device),
     path('add/', web.add_data),
 ]

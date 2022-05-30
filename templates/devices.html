@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Daskboard{% endblock title %}
+{% block content %}
+{% if device %}
+<div class="row mb-2">
+    <div class="col-xl-4 col-sm-6 grid-margin stretch-card">
+        <a class="card-link" href="/devices/light">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if device.light %}
+                    <h1 class="dashboard-value mb-3 text-success">ON</h1>
+                    {% else %}
+                    <h1 class="dashboard-value mb-3 text-danger">OFF</h1>
+                    {% endif %}
+                    <h3 class="text-muted font-weight-normal">Light</h6>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-xl-4 col-sm-6 grid-margin stretch-card">
+        <a class="card-link" href="/devices/fan">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if device.fan %}
+                    <h1 class="dashboard-value mb-3 text-success">ON</h1>
+                    {% else %}
+                    <h1 class="dashboard-value mb-3 text-danger">OFF</h1>
+                    {% endif %}
+                    <h3 class="text-muted font-weight-normal">Fan</h6>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div id="water" class="col-xl-4 col-sm-6 grid-margin stretch-card">
+        <a class="card-link" href="/devices/water">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if device.water %}
+                    <h1 class="dashboard-value mb-3 text-success">ON</h1>
+                    {% else %}
+                    <h1 class="dashboard-value mb-3 text-danger">OFF</h1>
+                    {% endif %}
+                    <h3 class="text-muted font-weight-normal">Water</h6>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{% else %}
+<h3 class="mb-2">Update fail! Please try again.</h3>
+{% endif %}
+<button class="btn btn-primary" onclick="location.reload();">Update</button>
+{% endblock content %}

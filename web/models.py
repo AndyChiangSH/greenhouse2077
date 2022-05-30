@@ -12,3 +12,9 @@ class Sensor(models.Model):
     
     def __str__(self):
         return str(self.time)
+
+
+class Device(models.Model):
+    light = models.BooleanField(default=False)
+    fan = models.BooleanField(default=False)
+    water = models.BooleanField(default=False)
