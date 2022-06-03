@@ -3,6 +3,7 @@
 {% block title %}Daskboard{% endblock title %}
 {% block content %}
 {% if success %}
+<h1 class="mb-3">Dashboard</h1>
 <div class="row mb-2">
     <div class="col-xl-4 col-sm-6 grid-margin stretch-card">
         <a class="card-link" href="/chart/temperature">
@@ -111,7 +112,6 @@
                                 {% else %}
                                 --
                                 {% endif %}
-                                <span class="dashboard-unit">%</span>
                             </h1>
                         </div>
                     </div>
@@ -121,22 +121,22 @@
                         <div class="icon icon-box-success mb-1">
                             <span class="mdi mdi-arrow-top-right icon-item"></span>
                         </div>
-                        <p class="text-success font-weight-medium mb-0">+{{ soil_humi.diff }} %</p>
+                        <p class="text-success font-weight-medium mb-0">+{{ soil_humi.diff }}</p>
                         {% elif soil_humi.diff < 0 %} <div class="icon icon-box-danger mb-1">
                             <span class="mdi mdi-arrow-bottom-right icon-item"></span>
                     </div>
-                    <p class="text-danger font-weight-medium mb-0">{{ soil_humi.diff }} %</p>
+                    <p class="text-danger font-weight-medium mb-0">{{ soil_humi.diff }}</p>
                     {% else %}
                     <div class="icon icon-box-warning mb-1">
                         <span class="mdi mdi-arrow-right icon-item"></span>
                     </div>
-                    <p class="text-warning font-weight-medium mb-0">+0 %</p>
+                    <p class="text-warning font-weight-medium mb-0">+0</p>
                     {% endif %}
                     {% else %}
                     <div class="icon icon-box-secondary mb-1">
                         <span class="mdi mdi-close icon-item"></span>
                     </div>
-                    <p class="text-secondary font-weight-medium mb-0">-- %</p>
+                    <p class="text-secondary font-weight-medium mb-0">--</p>
                     {% endif %}
                 </div>
             </div>

@@ -2,13 +2,24 @@
 
 {% block title %}Daskboard{% endblock title %}
 {% block content %}
-{% if device %}
+<h1 class="mb-3">Devices</h1>
+<!-- Rounded switch -->
+<div class="mb-3">
+    <label>
+        <span class="text">AI control</span>
+        <input {% if AI_CONTROL %}checked{% endif %} type="checkbox" name="" id="control" class="checkbox"
+            onclick="switch_control()">
+        <span class="mbtn-box">
+            <span class="mbtn"></span>
+        </span>
+    </label>
+</div>
 <div class="row mb-2">
     <div class="col-xl-4 col-sm-6 grid-margin stretch-card">
-        <a class="card-link" href="/devices/light">
+        <a class="card-link {% if AI_CONTROL %}disabled{% endif %}" href="/devices/light">
             <div class="card">
                 <div class="card-body text-center">
-                    {% if device.light %}
+                    {% if light %}
                     <h1 class="dashboard-value mb-3 text-success">ON</h1>
                     {% else %}
                     <h1 class="dashboard-value mb-3 text-danger">OFF</h1>
@@ -19,10 +30,10 @@
         </a>
     </div>
     <div class="col-xl-4 col-sm-6 grid-margin stretch-card">
-        <a class="card-link" href="/devices/fan">
+        <a class="card-link {% if AI_CONTROL %}disabled{% endif %}" href="/devices/fan">
             <div class="card">
                 <div class="card-body text-center">
-                    {% if device.fan %}
+                    {% if fan %}
                     <h1 class="dashboard-value mb-3 text-success">ON</h1>
                     {% else %}
                     <h1 class="dashboard-value mb-3 text-danger">OFF</h1>
@@ -33,10 +44,10 @@
         </a>
     </div>
     <div id="water" class="col-xl-4 col-sm-6 grid-margin stretch-card">
-        <a class="card-link" href="/devices/water">
+        <a class="card-link {% if AI_CONTROL %}disabled{% endif %}" href="/devices/water">
             <div class="card">
                 <div class="card-body text-center">
-                    {% if device.water %}
+                    {% if water %}
                     <h1 class="dashboard-value mb-3 text-success">ON</h1>
                     {% else %}
                     <h1 class="dashboard-value mb-3 text-danger">OFF</h1>
@@ -47,8 +58,17 @@
         </a>
     </div>
 </div>
-{% else %}
-<h3 class="mb-2">Update fail! Please try again.</h3>
-{% endif %}
 <button class="btn btn-primary" onclick="location.reload();">Update</button>
+
+<script>
+    function switch_control() {
+        var control = document.getElementById('control');
+        if (control.checked != true) {  // 關掉
+            window.location.href = '/devices/switch_control/?c=False';
+        }
+        else {  // 開啟
+            window.location.href = '/devices/switch_control/?c=True';
+        }
+    }
+</script>
 {% endblock content %}

@@ -1,7 +1,19 @@
-from logging import exception
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import Device, Sensor
+from .models import Sensor
+from .forms import TimeRangeForm 
+import json
+import pickle
+import pandas as pd
+import sklearn
+from django.utils import timezone
+
+
+AI_CONTROL = False
+LIGHT_STATE = False
+FAN_STATE = False
+WATER_STATE = False
+
 
 # Create your views here.
 def index(request):
@@ -60,35 +72,16 @@ def index(request):
     return render(request, "index.html", context)
 
 
-def add_data(request):
-    try:
-        temp = request.GET["temp"]
-        humi = request.GET["humi"]
-        soil_humi = request.GET["soil_humi"]
-        bright = request.GET["bright"]
-        air_p = request.GET["air_p"]
-        
-        if temp == "":
-            temp = None
-        if humi == "":
-            humi = None
-        if soil_humi == "":
-            soil_humi = None
-        if bright == "":
-            bright = None
-        if air_p == "":
-            air_p = None
-        
-        new_data = Sensor.objects.create(temp=temp, humi=humi, soil_humi=soil_humi, bright=bright, air_p=air_p)
-        new_data.save()
-        
-        return HttpResponse("Add data success.")
-    except exception as e:
-        return HttpResponse(f"Add data fail.<br>{e}")
-
-
 def chart(request, name="temperature"):
-    data = Sensor.objects.all().order_by("time")
+    form = TimeRangeForm(request.GET)
+    try:
+        start_time = form.data["start_time"]
+        end_time = form.data["end_time"]
+        data = Sensor.objects.filter(time__range=[start_time, end_time]).order_by("-time")
+    except:
+        data = Sensor.objects.all().order_by("-time")[:20]
+    
+    data = reversed(data)
     
     if name == "temperature":
         label = "Temperature"
@@ -106,7 +99,9 @@ def chart(request, name="temperature"):
     x = list()
     y = list()
     for d in data:
-        x.append(d.time.strftime("%Y/%m/%d %H:%M"))
+        time_in_timezone = d.time+timezone.timedelta(hours=8)
+        # print(time_in_timezone)
+        x.append(time_in_timezone.strftime("%Y-%m-%d %H:%M"))
         if name == "temperature":
             y.append(d.temp)
         if name == "humidity":
@@ -122,37 +117,146 @@ def chart(request, name="temperature"):
         "label": label,
         "x": x,
         "y": y,
+        "form": form,
     }
     
     return render(request, "chart.html", context=context)
 
 
 def devices(request):
-    try:
-        device = Device.objects.get(id=1)
-    except exception as e:
-        return HttpResponse(f"Get device fail.<br>{e}")
-    
+    global LIGHT_STATE, FAN_STATE, WATER_STATE
     context = {
-        "device": device,
+        "light": LIGHT_STATE,
+        "fan": FAN_STATE,
+        "water": WATER_STATE,
+        "AI_CONTROL": AI_CONTROL,
     }
     
     return render(request, "devices.html", context=context)
 
 
 def switch_device(request, device):
-    try:
-        device_data = Device.objects.get(id=1)
-    except exception as e:
-        return HttpResponse(f"Get device fail.<br>{e}")
-    
+    global LIGHT_STATE, FAN_STATE, WATER_STATE
     if device == "light":
-        device_data.light = not device_data.light
+        LIGHT_STATE = not LIGHT_STATE
     elif device == "fan":
-        device_data.fan = not device_data.fan
+        FAN_STATE = not FAN_STATE
     elif device == "water":
-        device_data.water = not device_data.water
+        WATER_STATE = not WATER_STATE
     
-    device_data.save()
     return redirect("/devices/")
+
+
+def switch_control(request):
+    global AI_CONTROL
+    c = request.GET["c"]
     
+    if c != None:
+        if c == "True":
+            AI_CONTROL = True
+        else:
+            AI_CONTROL = False
+    
+    return redirect("/devices/")
+
+
+# API: 接收感測器
+def api_sensor(request):
+    temp = request.GET["temp"]
+    humi = request.GET["humi"]
+    soil_humi = request.GET["soil_humi"]
+    bright = request.GET["bright"]
+    air_p = request.GET["air_p"]
+    
+    if temp == "":
+        temp = None
+    if humi == "":
+        humi = None
+    if soil_humi == "":
+        soil_humi = None
+    if bright == "":
+        bright = None
+    if air_p == "":
+        air_p = None
+    
+    temp = float(temp)
+    humi = int(humi)
+    soil_humi = int(soil_humi)
+    bright = int(bright)
+    air_p = float(air_p)
+    
+    new_data = Sensor.objects.create(temp=float(temp), humi=humi, soil_humi=soil_humi, bright=bright, air_p=air_p)
+    new_data.save()
+    
+    return HttpResponse("Add data success.")
+
+
+# API: 回傳裝置狀態
+def api_device(request):
+    global LIGHT_STATE, FAN_STATE, WATER_STATE
+    
+    temp = request.GET["temp"]
+    humi = request.GET["humi"]
+    soil_humi = request.GET["soil_humi"]
+    bright = request.GET["bright"]
+    air_p = request.GET["air_p"]
+    
+    if temp == "":
+        temp = None
+    if humi == "":
+        humi = None
+    if soil_humi == "":
+        soil_humi = None
+    if bright == "":
+        bright = None
+    if air_p == "":
+        air_p = None
+    
+    temp = float(temp)
+    humi = int(humi)
+    soil_humi = int(soil_humi)
+    bright = int(bright)
+    air_p = float(air_p)
+    
+    global AI_CONTROL
+    print("AI_CONTROL =", AI_CONTROL)
+    if AI_CONTROL:  # AI控制
+        data = {"temp": [temp], "humi": [humi], "soil_humi": [soil_humi], "bright": [bright], "air_p": [air_p]}
+        df = pd.DataFrame(data=data)
+        print(df)  
+        
+        with open('model/model.pickle', 'rb') as f:
+            model = pickle.load(f)
+            pred = model.predict(df)
+            print(pred)
+        
+        LIGHT_STATE, FAN_STATE, WATER_STATE = device_pred(temp, humi, soil_humi, bright, air_p, WATER_STATE)
+        
+    # 回傳json
+    json_obj = {
+        "light": int(LIGHT_STATE),
+        "fan": int(FAN_STATE),
+        "water": int(WATER_STATE),
+    }
+    print(json_obj)
+        
+    return HttpResponse(json.dumps(json_obj))
+
+
+def device_pred(temp, humi, soil_humi, bright, air_p, water):
+    if bright >= 1500:
+        light = False
+    else:
+        light = True
+        
+    if temp >= 27:
+        fan = True
+    else:
+        fan = False
+    
+    if soil_humi >= 1900:
+        water = True
+    elif soil_humi < 1500:
+        water = False
+        
+    return light, fan, water

@@ -5,6 +5,7 @@
 <h1>{{ label }}</h1>
 {% if y %}
 <canvas id="myChart" height="100"></canvas>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('myChart').getContext('2d');
@@ -28,5 +29,12 @@
 {% else %}
 <h3 class="mb-2">No data.</h3>
 {% endif %}
+<form action="" method="GET">
+{% for field in form %}
+    {{ field.label_tag }} {{ field }}
+{% endfor %}
+<input class="btn btn-secondary" type="submit" value="查詢時段">
+<form>
+<br>
 <button class="btn btn-primary" onclick="location.reload();">Update Data</button>
 {% endblock content %}

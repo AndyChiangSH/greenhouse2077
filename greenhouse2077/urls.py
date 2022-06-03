@@ -23,5 +23,7 @@ urlpatterns = [
     path('chart/<str:name>', web.chart),
     path('devices/', web.devices),
     path('devices/<str:device>', web.switch_device),
-    path('add/', web.add_data),
+    path('devices/switch_control/', web.switch_control),
+    path('api/sensor/', web.api_sensor),
+    path('api/device/', web.api_device),
 ]
