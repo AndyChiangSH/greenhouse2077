@@ -3,16 +3,19 @@ from django.shortcuts import render, redirect
 from .models import Sensor
 from .forms import TimeRangeForm 
 import json
-import pickle
 import pandas as pd
-import sklearn
 from django.utils import timezone
+import joblib
 
 
 AI_CONTROL = False
 LIGHT_STATE = False
 FAN_STATE = False
 WATER_STATE = False
+
+light_model = joblib.load('./model/light_model.joblib')
+fan_model = joblib.load('./model/fan_model.joblib')
+water_model = joblib.load('./model/water_model.joblib')
 
 
 # Create your views here.
@@ -225,12 +228,19 @@ def api_device(request):
         df = pd.DataFrame(data=data)
         print(df)  
         
-        with open('model/model.pickle', 'rb') as f:
-            model = pickle.load(f)
-            pred = model.predict(df)
-            print(pred)
+        light_pred = light_model.predict(df)
+        print("light_pred =", light_pred)
+        fan_pred = fan_model.predict(df)
+        print("fan_pred =", fan_pred)
+        water_pred = water_model.predict(df)
+        print("water_pred =", water_pred)
         
-        LIGHT_STATE, FAN_STATE, WATER_STATE = device_pred(temp, humi, soil_humi, bright, air_p, WATER_STATE)
+        LIGHT_STATE = light_pred[0]
+        FAN_STATE = fan_pred[0]
+        if water_pred != 2:
+            WATER_STATE = water_pred[0]
+        
+        # LIGHT_STATE, FAN_STATE, WATER_STATE = device_pred(temp, humi, soil_humi, bright, air_p, WATER_STATE)
         
     # 回傳json
     json_obj = {
@@ -241,22 +251,3 @@ def api_device(request):
     print(json_obj)
         
     return HttpResponse(json.dumps(json_obj))
-
-
-def device_pred(temp, humi, soil_humi, bright, air_p, water):
-    if bright >= 1500:
-        light = False
-    else:
-        light = True
-        
-    if temp >= 27:
-        fan = True
-    else:
-        fan = False
-    
-    if soil_humi >= 1900:
-        water = True
-    elif soil_humi < 1500:
-        water = False
-        
-    return light, fan, water
