@@ -10,7 +10,7 @@ with open('./model/data.csv', 'w', newline='', encoding="big5") as csvfile:
     for i in range(1000):
         temp = random.uniform(15, 40)
         humi = random.randint(0, 100)
-        soil_humi = random.randint(1200, 2200)
+        soil_humi = random.randint(1800, 4000)
         bright = random.randint(0, 3000)
         air_p = random.uniform(900, 1200)
         
@@ -24,9 +24,9 @@ with open('./model/data.csv', 'w', newline='', encoding="big5") as csvfile:
         else:
             fan = 0
         
-        if soil_humi >= 1900:
+        if soil_humi >= 3000:
             water = 1
-        elif soil_humi < 1500:
+        elif soil_humi < 2400:
             water = 0
         else:
             water = 2

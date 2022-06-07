@@ -205,7 +205,7 @@
                                 {% else %}
                                 --
                                 {% endif %}
-                                <span class="dashboard-unit">Pa</span>
+                                <span class="dashboard-unit">hPa</span>
                             </h1>
                         </div>
                     </div>
@@ -215,22 +215,22 @@
                         <div class="icon icon-box-success mb-1">
                             <span class="mdi mdi-arrow-top-right icon-item"></span>
                         </div>
-                        <p class="text-success font-weight-medium mb-0">+{{ air_p.diff }} Pa</p>
+                        <p class="text-success font-weight-medium mb-0">+{{ air_p.diff }} hPa</p>
                         {% elif air_p.diff < 0 %} <div class="icon icon-box-danger mb-1">
                             <span class="mdi mdi-arrow-bottom-right icon-item"></span>
                     </div>
-                    <p class="text-danger font-weight-medium mb-0">{{ air_p.diff }} Pa</p>
+                    <p class="text-danger font-weight-medium mb-0">{{ air_p.diff }} hPa</p>
                     {% else %}
                     <div class="icon icon-box-warning mb-1">
                         <span class="mdi mdi-arrow-right icon-item"></span>
                     </div>
-                    <p class="text-warning font-weight-medium mb-0">+0 Pa</p>
+                    <p class="text-warning font-weight-medium mb-0">+0 hPa</p>
                     {% endif %}
                     {% else %}
                     <div class="icon icon-box-secondary mb-1">
                         <span class="mdi mdi-close icon-item"></span>
                     </div>
-                    <p class="text-secondary font-weight-medium mb-0">-- Pa</p>
+                    <p class="text-secondary font-weight-medium mb-0">-- hPa</p>
                     {% endif %}
                 </div>
             </div>

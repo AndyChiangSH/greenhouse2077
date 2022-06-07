@@ -1,11 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
 from .models import Sensor
 from .forms import TimeRangeForm 
-import json
 import pandas as pd
-from django.utils import timezone
 import joblib
+import json
 
 
 AI_CONTROL = False
@@ -157,41 +158,49 @@ def switch_control(request):
     if c != None:
         if c == "True":
             AI_CONTROL = True
+            messages.add_message(request, messages.SUCCESS, "Open AI control!")
         else:
             AI_CONTROL = False
+            messages.add_message(request, messages.WARNING, "Close AI control!")
     
     return redirect("/devices/")
 
 
 # API: 接收感測器
 def api_sensor(request):
-    temp = request.GET["temp"]
-    humi = request.GET["humi"]
-    soil_humi = request.GET["soil_humi"]
-    bright = request.GET["bright"]
-    air_p = request.GET["air_p"]
-    
-    if temp == "":
-        temp = None
-    if humi == "":
-        humi = None
-    if soil_humi == "":
-        soil_humi = None
-    if bright == "":
-        bright = None
-    if air_p == "":
-        air_p = None
-    
-    temp = float(temp)
-    humi = int(humi)
-    soil_humi = int(soil_humi)
-    bright = int(bright)
-    air_p = float(air_p)
-    
-    new_data = Sensor.objects.create(temp=float(temp), humi=humi, soil_humi=soil_humi, bright=bright, air_p=air_p)
-    new_data.save()
-    
-    return HttpResponse("Add data success.")
+    try:
+        temp = request.GET["temp"]
+        humi = request.GET["humi"]
+        soil_humi = request.GET["soil_humi"]
+        bright = request.GET["bright"]
+        air_p = request.GET["air_p"]
+        
+        if temp == "":
+            temp = None
+        if humi == "":
+            humi = None
+        if soil_humi == "":
+            soil_humi = None
+        if bright == "":
+            bright = None
+        if air_p == "":
+            air_p = None
+        
+        temp = round(float(temp), 2)
+        humi = int(humi)
+        soil_humi = int(soil_humi)
+        bright = int(bright)
+        air_p = round(float(air_p)/100, 2)
+        print(f"temp={temp}, humi={humi}, soil_humi={soil_humi}, bright={bright}, air_p={air_p}")
+        
+        new_data = Sensor.objects.create(temp=float(temp), humi=humi, soil_humi=soil_humi, bright=bright, air_p=air_p)
+        new_data.save()
+        
+        messages.add_message(request, messages.INFO, "Sensor data update successful!")
+        return HttpResponse("Sensor data update successful!")
+    except:
+        messages.add_message(request, messages.ERROR, "Sensor data update fail!")
+        return HttpResponse("Sensor data update fail!")
 
 
 # API: 回傳裝置狀態
@@ -219,7 +228,7 @@ def api_device(request):
     humi = int(humi)
     soil_humi = int(soil_humi)
     bright = int(bright)
-    air_p = float(air_p)
+    air_p = float(air_p)/100
     
     global AI_CONTROL
     print("AI_CONTROL =", AI_CONTROL)
@@ -235,10 +244,31 @@ def api_device(request):
         water_pred = water_model.predict(df)
         print("water_pred =", water_pred)
         
-        LIGHT_STATE = light_pred[0]
-        FAN_STATE = fan_pred[0]
-        if water_pred != 2:
-            WATER_STATE = water_pred[0]
+        light_next = bool(light_pred[0])
+        fan_next = bool(fan_pred[0])
+        water_next = water_pred[0]
+        
+        if LIGHT_STATE != light_next:
+            LIGHT_STATE = light_next
+            if light_next == True:
+                messages.add_message(request, messages.SUCCESS, "[AI] Light ON!")
+            else:
+                messages.add_message(request, messages.WARNING, "[AI] Light OFF!")
+        
+        if FAN_STATE != fan_next:
+            FAN_STATE = fan_next
+            if fan_next == True:
+                messages.add_message(request, messages.SUCCESS, "[AI] Fan ON!")
+            else:
+                messages.add_message(request, messages.WARNING, "[AI] Fan OFF!")
+        
+        if water_next != 2:
+            if WATER_STATE != bool(water_next):
+                WATER_STATE = bool(water_next)
+                if bool(water_next) == True:
+                    messages.add_message(request, messages.SUCCESS, "[AI] Water ON!")
+                else:
+                    messages.add_message(request, messages.WARNING, "[AI] Water OFF!")
         
         # LIGHT_STATE, FAN_STATE, WATER_STATE = device_pred(temp, humi, soil_humi, bright, air_p, WATER_STATE)
         
