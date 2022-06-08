@@ -58,7 +58,7 @@
         </a>
     </div>
 </div>
-<button class="btn btn-primary" onclick="location.reload();">Update</button>
+<button class="btn btn-primary" onclick="update();">Update</button>
 
 <script>
     function switch_control() {
@@ -69,6 +69,12 @@
         else {  // 開啟
             window.location.href = '/devices/switch_control/?c=True';
         }
+    }
+
+    var timer = window.setInterval("update()", 5000);
+
+    function update() {
+        location.reload();
     }
 </script>
 {% endblock content %}

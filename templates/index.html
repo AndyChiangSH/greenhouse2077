@@ -243,5 +243,13 @@
 {% else %}
 <h3 class="mb-2">Update fail! Please try again.</h3>
 {% endif %}
-<button class="btn btn-primary" onclick="location.reload();">Update</button>
+<button class="btn btn-primary" onclick="update();">Update</button>
+
+<script>
+    var timer = window.setInterval("update()", 10000);
+
+    function update() {
+        location.reload();
+    }
+</script>
 {% endblock content %}
