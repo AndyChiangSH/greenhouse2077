@@ -49,9 +49,9 @@ Adafruit_BMP280 bmp; // I2C
 //Adafruit_BMP280 bmp(BMP_CS); // hardware SPI
 //Adafruit_BMP280 bmp(BMP_CS, BMP_MOSI, BMP_MISO,  BMP_SCK);
 
-const char* ssid = "Andy's Laptop";
-const char* password = "00000000";
-String serverName = "http://192.168.0.123:8000/";
+const char* ssid = "<你的Wifi名稱>";
+const char* password = "<你的Wifi密碼>";
+String serverName = "<你的IP位置和port>";
 
 void setup() {
     Serial.begin(9600);
@@ -212,8 +212,6 @@ void api_sensor() {
         // Your Domain name with URL path or IP address with path
         http.begin(serverPath.c_str());
         Serial.println("Http GET request:"+serverPath);
-        //Serial.println(serverPath.c_str());
-        //http.begin("http://ptsv2.com/t/vn6tx-1654187358/post");
         
         // Send HTTP GET request
         int httpResponseCode = http.GET();
@@ -252,8 +250,6 @@ void api_device(){
     // Your Domain name with URL path or IP address with path
     http.begin(serverPath.c_str());
     Serial.println("Http GET request:"+serverPath);
-    //Serial.println(serverPath.c_str());
-    //http.begin("http://ptsv2.com/t/vn6tx-1654187358/post");
     
     // Send HTTP GET request
     int httpResponseCode = http.GET();
